@@ -1,0 +1,30 @@
+[
+  {
+    "courseId": "CCC309",
+    "studentId": "12345"
+  },
+  {
+    "courseId": "CCC303",
+    "studentId": "12345"
+  },
+  {
+    "courseId": "CCC305",
+    "studentId": "12345"
+  },
+  {
+    "courseId": "CCC305",
+    "studentId": "67890"
+  },
+  {
+    "courseId": "CCC305",
+    "studentId": "54321"
+  },
+  {
+    "courseId": "CCC305",
+    "studentId": "09875"
+  },
+  {
+    "courseId": "CCC305",
+    "studentId": "13579"
+  }
+]

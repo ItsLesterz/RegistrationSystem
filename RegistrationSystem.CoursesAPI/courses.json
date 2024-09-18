@@ -1,0 +1,32 @@
+[
+  {
+    "id": "CCC309",
+    "name": "Concurrencia y Sistemas Distribuidos",
+    "availableSeats": 10,
+    "uv": 4
+  },
+  {
+    "id": "CCC303",
+    "name": "Bases de Datos 1",
+    "availableSeats": 5,
+    "uv": 4
+  },
+  {
+    "id": "CCC305",
+    "name": "Ingenieria de Software",
+    "availableSeats": 5,
+    "uv": 4
+  },
+  {
+    "id": "CCC414",
+    "name": "Sistemas Inteligentes",
+    "availableSeats": 12,
+    "uv": 4
+  },
+  {
+    "id": "CCC310",
+    "name": "Experiencia de Usuario",
+    "availableSeats": 8,
+    "uv": 4
+  }
+]

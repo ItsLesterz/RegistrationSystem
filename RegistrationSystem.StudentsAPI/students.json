@@ -1,0 +1,27 @@
+[
+  {
+    "id": "12345",
+    "name": "Juan Jose Paz Alvarado",
+    "email": "juan.paz@united.com"
+  },
+  {
+    "id": "67890",
+    "name": "Melissa Paola Gonzalez Andrade",
+    "email": "meli.gonzalez@united.com"
+  },
+  {
+    "id": "54321",
+    "name": "Katherine Gisselle Zambrano Cruz",
+    "email": "kath.zambrano@united.com"
+  },
+  {
+    "id": "09875",
+    "name": "Pedro Daniel Lopez Colindres",
+    "email": "pedro.lopez@united.com"
+  },
+  {
+    "id": "13579",
+    "name": "Rafael Alberto Villanueva",
+    "email": "rafa.vilanueva@united.com"
+  }
+]
