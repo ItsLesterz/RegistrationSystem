@@ -9,7 +9,17 @@ using RegistrationSystem.RegistrationAPI.Interfaces;
 
 public class RegistrationService
 {
-    string connectionString = "amqp://username:password@localhost:5672/myhost";
+    private readonly string _rabbitMqConnectionString;
+
+    public RegistrationService(IDataService<Register> dataService, HttpClient studentsHttpClient, HttpClient coursesHttpClient, IConnection rabbitMqConnection, IConfiguration configuration)
+    {
+        _dataService = dataService;
+        _studentsHttpClient = studentsHttpClient;
+        _coursesHttpClient = coursesHttpClient;
+        _rabbitMqConnection = rabbitMqConnection;
+        _rabbitMqConnectionString = configuration["RabbitMQ:ConnectionString"]; // Obtener el connection string desde appsettings.json
+    }
+
     private readonly IDataService<Register> _dataService;
     private readonly HttpClient _studentsHttpClient;
     private readonly HttpClient _coursesHttpClient;
@@ -24,24 +34,36 @@ public class RegistrationService
     }
     public IEnumerable<Register> GetRegistrationsByCourseId(string courseId)
     {
-        // Retrieve registrations for the given course ID from the data service
+        // Mejorar rendimiento con AsQueryable para grandes conjuntos de datos
         var registrations = _dataService.GetEntities()
             .Where(r => r.CourseId == courseId)
+            .AsQueryable()
             .ToList();
 
         return registrations;
     }
+
     public async Task<bool> ValidateStudentAsync(int studentId)
     {
         var response = await _studentsHttpClient.GetAsync($"/students/{studentId}");
-        return response.IsSuccessStatusCode;
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Error fetching student ID {studentId}: {response.StatusCode}");
+        }
+        return true;
     }
+
 
     public async Task<bool> ValidateCourseAsync(string courseId)
     {
         var response = await _coursesHttpClient.GetAsync($"/courses/{courseId}");
-        return response.IsSuccessStatusCode;
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Error fetching course ID {courseId}: {response.StatusCode}");
+        }
+        return true;
     }
+
 
     public async Task<bool> CheckCourseAvailabilityAsync(string courseId)
     {
@@ -84,21 +106,34 @@ public class RegistrationService
         var result = _dataService.PostEntities(registrations);
 
         // Send report to ReportService via RabbitMQ
-        SendReportToRabbitMq(result);
+        await SendReportToRabbitMqAsync(result);
 
         return result;
     }
 
-    private void SendReportToRabbitMq(IEnumerable<Register> registrations)
+    private async Task SendReportToRabbitMqAsync(IEnumerable<Register> registrations)
     {
-        using (var channel = _rabbitMqConnection.CreateModel())
+        try
         {
-            channel.QueueDeclare(queue: "reportQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            using (var channel = _rabbitMqConnection.CreateModel())
+            {
+                channel.QueueDeclare(queue: "reportQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-            var message = JsonSerializer.Serialize(registrations);
-            var body = System.Text.Encoding.UTF8.GetBytes(message);
+                var message = JsonSerializer.Serialize(registrations);
+                var body = System.Text.Encoding.UTF8.GetBytes(message);
 
-            channel.BasicPublish(exchange: "", routingKey: "reportQueue", basicProperties: null, body: body);
+                await Task.Run(() =>
+                {
+                    channel.BasicPublish(exchange: "", routingKey: "reportQueue", basicProperties: null, body: body);
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            // Manejar la excepción, por ejemplo, loguearla
+            Console.WriteLine($"Error sending message to RabbitMQ: {ex.Message}");
         }
     }
+
+
 }

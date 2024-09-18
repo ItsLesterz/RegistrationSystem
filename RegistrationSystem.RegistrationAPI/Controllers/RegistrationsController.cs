@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RegistrationSystem.RegistrationAPI.Models;
+using RegistrationSystem.RegistrationAPI.Models;
+using RegistrationSystem.RegistrationAPI.Services;
 
 
 namespace RegistrationSystem.RegistrationAPI.Controllers
