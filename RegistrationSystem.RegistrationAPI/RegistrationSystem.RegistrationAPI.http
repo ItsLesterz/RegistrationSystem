@@ -3,6 +3,5 @@
 GET {{RegistrationSystem.RegistrationAPI_HostAddress}}/weatherforecast/
 Accept: application/json
 
-GET {{RegistrationSystem.RegistrationAPI_}}
 
 ###
